@@ -1,11 +1,10 @@
 ﻿namespace SampleBddTest
 {
 
-    using System;
-    using NUnit.Framework;
-    using TechTalk.SpecFlow;
-    using SampleBddTest.AddService;
     using Netty;
+    using NUnit.Framework;
+    using SampleBddTest.AddService;
+    using TechTalk.SpecFlow;
 
     [Binding]
     public class AddSomeNumbersSteps

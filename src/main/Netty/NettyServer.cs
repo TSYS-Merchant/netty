@@ -2,10 +2,12 @@
 {
 
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Reflection;
     using System.Threading;
     using System.Web.Hosting;
+    using System.Xml;
 
     /// <summary>
     ///     A class that serves as the base for all ASP hosted websites.
@@ -13,10 +15,18 @@
     public class NettyServer
     {
 
+        /// <summary>
+        /// The pattern used to locate an AppSetting node with a specified key.
+        /// </summary>
+        private const string AppSettingXpathPattern = "/configuration/appSettings/add[@key='{0}']";
+
         private readonly IAspServerConfiguration _config;
         private bool _isRunning;
         private AspServerListener _listener;
         private Thread _processThread;
+        private readonly string _originalWebConfig;
+        private readonly string _webConfigFile;
+        private bool _webConfigAltered;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Netty.NettyServer" /> class.
@@ -24,7 +34,7 @@
         /// <param name="physicalPath">The physical path to the website.</param>
         /// <param name="virtualPath">The virtual path the website runs on.</param>
         public NettyServer(string physicalPath, string virtualPath) : 
-            this(physicalPath, virtualPath, NetworkUtility.FindRandomOpenPort())
+            this(physicalPath, virtualPath, NetworkUtility.FindRandomOpenPort(), true)
         {
         }
 
@@ -38,7 +48,23 @@
         /// <exception cref="System.ArgumentException"><paramref name="port"/> is already in use.</exception>
         /// <exception cref="System.ArgumentOutOfRangeException"><paramref name="port"/> exceeds the allows TCP port range.</exception>
         /// <exception cref="System.IO.DirectoryNotFoundException"><paramref name="physicalPath"/> does not exist.</exception>
-        public NettyServer(string physicalPath, string virtualPath, int port)
+        public NettyServer(string physicalPath, string virtualPath, int port) :
+            this(physicalPath, virtualPath, port, true)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="T:Netty.NettyServer" /> class.
+        /// </summary>
+        /// <param name="physicalPath">The physical path to the website.</param>
+        /// <param name="virtualPath">The virtual path the website runs on.</param>
+        /// <param name="port">The port the website runs on.</param>
+        /// <param name="enforcePortCheck"><c>true</c> to ensure the port is unused; otherwise, <c>false</c>.</param>
+        /// <exception cref="System.ArgumentNullException"><paramref name="virtualPath"/> is <c>null</c>.</exception>
+        /// <exception cref="System.ArgumentException"><paramref name="port"/> is already in use.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException"><paramref name="port"/> exceeds the allows TCP port range.</exception>
+        /// <exception cref="System.IO.DirectoryNotFoundException"><paramref name="physicalPath"/> does not exist.</exception>
+        public NettyServer(string physicalPath, string virtualPath, int port, bool enforcePortCheck)
         {
 
             if (virtualPath == null)
@@ -57,7 +83,7 @@
             }
 
             var di = new DirectoryInfo(physicalPath);
-            
+
             if (!di.Exists)
             {
                 throw new DirectoryNotFoundException();
@@ -65,8 +91,13 @@
 
             physicalPath = di.FullName;
 
+            _webConfigFile = Path.Combine(physicalPath, "web.config");
+
+            _originalWebConfig = File.Exists(_webConfigFile) ? File.ReadAllText(_webConfigFile) : null;
+            _webConfigAltered = false;
+
             virtualPath = virtualPath[0] == '/' ? virtualPath : "/" + virtualPath;
-            virtualPath = virtualPath[virtualPath.Length - 1] == '/' ?  virtualPath : virtualPath + "/";
+            virtualPath = virtualPath[virtualPath.Length - 1] == '/' ? virtualPath : virtualPath + "/";
 
             _config = new AspServerConfiguration()
             {
@@ -121,6 +152,81 @@
         {
             get { return _config.VirtualPath; }
         }
+        
+        /// <summary>
+        ///     Alters the application setting for the web site.
+        /// </summary>
+        /// <param name="key">The key for the application setting.</param>
+        /// <param name="value">The value of the application setting.</param>
+        /// <returns>The <see cref="T:Netty.NettyServer"/> the configuration was altered for.</returns>
+        public NettyServer AlterApplicationSetting(string key, string value)
+        {
+            var xpath = String.Format(CultureInfo.InvariantCulture, NettyServer.AppSettingXpathPattern, key);
+            var server = this.AlterConfigurationNodeAttributeValue(xpath, "value", value);
+            return server;
+
+        }
+
+        /// <summary>
+        ///     Alters the configuration for the website.
+        /// </summary>
+        /// <param name="xpath">The XPath expression.</param>
+        /// <param name="attribute">The attribute.</param>
+        /// <param name="value">The new value.</param>
+        /// <returns>The <see cref="T:Netty.NettyServer"/> the configuration was altered for.</returns>
+        public NettyServer AlterConfigurationNodeAttributeValue(string xpath, string attribute, string value)
+        {
+
+            if (_originalWebConfig == null)
+            {
+                return this;
+            }
+
+            var doc = new XmlDocument();
+            doc.Load(_webConfigFile);
+
+            var node = doc.SelectSingleNode(xpath);
+
+            if (node != null && node.Attributes != null && node.Attributes[attribute] != null)
+            {
+                node.Attributes[attribute].Value = value;
+                doc.Save(_webConfigFile);
+                _webConfigAltered = true;
+            }
+
+            return this;
+
+        }
+
+        /// <summary>
+        ///     Alters the configuration for the website.
+        /// </summary>
+        /// <param name="xpath">The XPath expression.</param>
+        /// <param name="value">The new value.</param>
+        /// <returns>The <see cref="T:Netty.NettyServer"/> the configuration was altered for.</returns>
+        public NettyServer AlterConfigurationNodeValue(string xpath, string value)
+        {
+
+            if (_originalWebConfig == null)
+            {
+                return this;
+            }
+
+            var doc = new XmlDocument();
+            doc.Load(_webConfigFile);
+
+            var node = doc.SelectSingleNode(xpath);
+
+            if (node != null)
+            {
+                node.Value = value;
+                doc.Save(_webConfigFile);
+                _webConfigAltered = true;
+            }
+
+            return this;
+
+        }
 
         /// <summary>
         ///     Starts the instance of the ASP.Net server.
@@ -163,6 +269,12 @@
             {
                 _processThread.Abort();
                 _processThread.Join();
+            }
+
+            if (_webConfigAltered && _originalWebConfig != null)
+            {
+                var configFile = Path.Combine(this.PhysicalPath, "web.config");
+                File.WriteAllText(configFile, _originalWebConfig);
             }
 
         }
@@ -222,7 +334,7 @@
                 null,
                 buildManagerHost, 
                 new object[] { listenerType.Assembly.FullName, listenerType.Assembly.Location }, 
-                System.Globalization.CultureInfo.InvariantCulture);
+                CultureInfo.InvariantCulture);
 
             // Register the MW.Web assembly with the host
             var configurationType = typeof(AspServerConfiguration);

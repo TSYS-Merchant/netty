@@ -2,6 +2,7 @@ namespace SampleWebsite
 {
 
     using System;
+    using System.Configuration;
 
     /// <summary>
     ///     A simple web page that shows the time.
@@ -19,6 +20,7 @@ namespace SampleWebsite
         protected void Page_Load(object sender, EventArgs e)
         {
             TimeLabel.Text = DateTime.Now.ToString();
+            ConfigLabel.Text = ConfigurationManager.AppSettings["Key1"];
         }
 
     }
