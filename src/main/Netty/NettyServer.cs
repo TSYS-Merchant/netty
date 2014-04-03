@@ -91,7 +91,7 @@
 
             physicalPath = di.FullName;
 
-            _webConfigFile = Path.Combine(physicalPath, "web.config");
+            _webConfigFile = Path.Combine(physicalPath, "Web.config");
 
             _originalWebConfig = File.Exists(_webConfigFile) ? File.ReadAllText(_webConfigFile) : null;
             _webConfigAltered = false;
