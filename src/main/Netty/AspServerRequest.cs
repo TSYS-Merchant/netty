@@ -441,7 +441,7 @@
             }
 
             translatedPath = translatedPath.Replace('/', '\\');
-            translatedPath = _physicalPath + translatedPath;
+            translatedPath = Path.Combine(_physicalPath, translatedPath);
 
             return translatedPath;
 
