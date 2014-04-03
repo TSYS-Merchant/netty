@@ -17,7 +17,7 @@ Why use Netty?
 *	Netty is great when you aren’t writing a traditional browser-based web application. With Netty, it’s possible to ship your whole website or client-server app, without requiring your customers to set up and configure IIS. Our [Console Application Example](src/examples/ConsoleExample/Program.cs) demonstrates how this can work.
 *	As a quick, ad-hoc webserver. You can use the standalone Netty console application to quickly start serving up any local directory from your hard drive.
 
-At Merchant Warehouse, we’re using Netty as part of our [Behavior Driven Testing Framework](http://en.wikipedia.org/wiki/Behavior-driven_development) as well as the backbone of our [Store and Forward](http://en.wikipedia.org/wiki/Store_and_forward) product, which allows merchants to accept credit and debit card transactions, even while they’re offline. Netty is known to work great on Windows, Linux, and Mac.
+At Merchant Warehouse, we’re using Netty as part of our [Behavior Driven Testing Framework](http://en.wikipedia.org/wiki/Behavior-driven_development) as well as the backbone of our [Store and Forward](http://en.wikipedia.org/wiki/Store_and_forward) product, which allows merchants to accept credit and debit card transactions even while they’re offline. Netty is known to work great on Windows, Linux, and Mac.
 
 #Examples
 
