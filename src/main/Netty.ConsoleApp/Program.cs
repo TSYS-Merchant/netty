@@ -2,7 +2,29 @@ namespace Netty.ConsoleApp
 {
 
     using System;
+    using System.Text;
+    using CommandLine;
+    using CommandLine.Text;
     using Netty;
+
+    internal class Options
+    {
+        [Option('p', "physical-path", Required = true, HelpText = "The physical path to the website.")]
+        public string PhysicalPath { get; set; }
+
+        [Option('v', "virtual-path", DefaultValue = "/", HelpText = "The virtual path the website runs on.")]
+        public string VirtualPath { get; set; }
+
+        [Option('i', "port", DefaultValue = -1, HelpText = "The port the website runs on.")]
+        public int Port { get; set; }
+
+        [HelpOption(HelpText = "Display this help screen.")]
+        public string GetUsage()
+        {
+            return HelpText.AutoBuild(this,
+                  (HelpText current) => HelpText.DefaultParsingErrorsHandler(this, current));
+        }
+    }
 
     /// <summary>
     ///     A class that provides an entry point for the application.
@@ -14,19 +36,26 @@ namespace Netty.ConsoleApp
         ///     Defines the entry point of the application.
         /// </summary>
         /// <param name="args">The command-line arguments passed to the application.</param>
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
+            var options = new Options();
+            if (!CommandLine.Parser.Default.ParseArguments(args, options))
+            {
+                return -1;
+            }
 
             Console.Write("Starting Web Server ... ");
 
-            // Setup a new web server using a random port.  The ports can be shared as long as
-            // the virtual path is unique.
-            var webServer = new NettyServer(@"..\..\..\SampleWebsite", "/Sample/");
+            int port = options.Port;
+            if (port == -1)
+            {
+                port = NetworkUtility.FindRandomOpenPort();
+            }
+
+            var webServer = new NettyServer(options.PhysicalPath, options.VirtualPath, port);
 
             // Update an application setting, and then start the server
-            webServer
-                .AlterApplicationSetting("Key1", "I am updated.")
-                .Start();
+            webServer.Start();
 
             Console.WriteLine("Done.");
             Console.WriteLine("Listening at: {0}", webServer.Port);
@@ -39,6 +68,7 @@ namespace Netty.ConsoleApp
 
             webServer.Stop();
 
+            return 0;
         }
 
     }

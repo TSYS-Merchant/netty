@@ -8,7 +8,7 @@ namespace Netty
     /// <summary>
     ///     A class that represents a set of Network related functions.
     /// </summary>
-    internal static class NetworkUtility
+    public static class NetworkUtility
     {
 
         public const int MinimumPort = 7000;
@@ -65,7 +65,7 @@ namespace Netty
         /// <returns>
         ///     <c>true</c> if the port is being used; otherwise, <c>false</c>.
         /// </returns>
-        public static bool IsPortBeingUsed(int localPort)
+        internal static bool IsPortBeingUsed(int localPort)
         {
 
             if (localPort < IPEndPoint.MinPort || localPort > IPEndPoint.MaxPort)
