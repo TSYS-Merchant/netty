@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleBddTest", "..\example
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebsite", "..\examples\SampleWebsite\SampleWebsite.csproj", "{0973B2DB-4652-4026-B05D-6DCEA7353611}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NettyConsoleApp", "Netty.ConsoleApp\NettyConsoleApp.csproj", "{17FB5B69-5F6C-4329-8E7F-B420C7CAF5D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{0973B2DB-4652-4026-B05D-6DCEA7353611}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0973B2DB-4652-4026-B05D-6DCEA7353611}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0973B2DB-4652-4026-B05D-6DCEA7353611}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17FB5B69-5F6C-4329-8E7F-B420C7CAF5D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17FB5B69-5F6C-4329-8E7F-B420C7CAF5D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17FB5B69-5F6C-4329-8E7F-B420C7CAF5D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17FB5B69-5F6C-4329-8E7F-B420C7CAF5D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
