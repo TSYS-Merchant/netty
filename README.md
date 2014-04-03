@@ -8,7 +8,7 @@ Netty was inspired by [Jetty](http://www.eclipse.org/jetty/about.php) – an emb
 *	SOAP web services written using WCF or ASMX
 *	RESTful web services written using WebAPI
 *	Static content, such as HTML, CSS, Javascript, and images
-*	And more
+*	And more!
 
 Why use Netty?
 ====
