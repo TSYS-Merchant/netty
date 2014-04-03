@@ -7,3 +7,7 @@ Find us on the [Netty Google Group](https://groups.google.com/forum/#!forum/nett
 Original Authors
 ====
 * Michael Harrington
+
+Contributors
+====
+* Dominic Lachowicz
