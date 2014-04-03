@@ -15,12 +15,13 @@ Why use Netty?
 
 *	Netty is a great software testing companion. Spin up a web server in your test framework’s [SetupFixture](http://www.nunit.org/index.php?p=setupFixture&r=2.4) and test all of your web pages and web services right in-process. No messy deployment steps, no extra scripts, no leftover files, just code. And as a neat side-effect, it’s easy to measure the effect of your functional tests and regression tests on your code coverage. See our [BDD Test Example](src/examples/SampleBddTest/AddSomeNumbersSteps.cs) for how this could work.
 *	Netty is great when you aren’t writing a traditional browser-based web application. With Netty, it’s possible to ship your whole website or client-server app, without requiring your customers to set up and configure IIS. Our [Console Application Example](src/examples/ConsoleExample/Program.cs) demonstrates how this can work.
+*	As a quick, ad-hoc webserver. You can use the standalone Netty console application to quickly start serving up any local directory from your hard drive.
 
 At Merchant Warehouse, we’re using Netty as part of our [Behavior Driven Testing Framework](http://en.wikipedia.org/wiki/Behavior-driven_development) as well as the backbone of our [Store and Forward](http://en.wikipedia.org/wiki/Store_and_forward) product, which allows merchants to accept credit and debit card transactions, even while they’re offline. Netty is known to work great on Windows, Linux, and Mac.
 
 #Examples
 
-"Hello World" in Netty:
+Here's "Hello World" in Netty:
 
 ```c#
 public static void Main(string[] args)
