@@ -51,7 +51,7 @@ public static void Main(string[] args)
 
 #Supported platforms
 
-Netty builds on versions 2.0 and later of Microsoft's CLR and has been tested on versions 4.0 and 4.5. It has also been built and tested using Mono 3.2 on CentOS 6.4.
+Netty builds on versions 4.0 and later of Microsoft's CLR. It has also been built and tested using Mono 3.2 on CentOS 6.4.
 
 #Downloading / Installation
 
