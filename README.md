@@ -22,7 +22,7 @@ At Merchant Warehouse, we’re using Netty as part of our [Behavior Driven Testi
 
 "Hello World" in Netty:
 
-```
+```c#
 public static void Main(string[] args)
 {
     Console.Write("Starting Web Server ... ");
